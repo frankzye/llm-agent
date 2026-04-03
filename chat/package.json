@@ -1,7 +1,13 @@
 {
   "name": "llm-tasks-chat",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "Next.js chat UI with assistant-ui, AI SDK, agents, and skills",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_GITHUB_USER/llm-tasks.git",
+    "directory": "chat"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

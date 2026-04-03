@@ -57,6 +57,23 @@ Optional Mem0-related variables are used when long-term memory is enabled (see c
 | `npm run lint` | ESLint |
 | `npm test` | Jest (if configured) |
 
+### Publish to npm (CI)
+
+GitHub Actions workflow [`.github/workflows/npm-publish.yml`](.github/workflows/npm-publish.yml) installs, tests, and builds from `chat/`, then runs `npm publish`.
+
+1. Add an [npm automation token](https://docs.npmjs.com/creating-and-viewing-access-tokens) as repository secret **`NPM_TOKEN`**.
+2. Bump `version` in `chat/package.json`.
+3. Push a tag matching `chat-v*` (for example `chat-v0.2.0`), or run the workflow manually via **Actions → Publish chat to npm → Run workflow**.
+
+From the repo root you can tag and push using the version in `chat/package.json`:
+
+```bash
+./scripts/publish-chat-tag.sh --dry-run   # preview tag name
+./scripts/publish-chat-tag.sh             # git tag + git push origin chat-v…
+```
+
+Update `repository.url` in `chat/package.json` to your real GitHub repo.
+
 ---
 
 ## Contributing
