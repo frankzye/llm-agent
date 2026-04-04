@@ -1,8 +1,0 @@
-.next
-.data
-.env
-.env.*
-*.tsbuildinfo
-coverage
-.vercel
-*.log

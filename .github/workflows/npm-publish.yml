@@ -15,10 +15,6 @@ on:
       - "chat-v*"
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: chat
-
 jobs:
   build:
     runs-on: ubuntu-latest
