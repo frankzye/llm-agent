@@ -285,7 +285,6 @@ export async function updateAgentConfigPartial(
       );
     }
   }
-
   await writeAgentConfig(cwd, next);
   return next;
 }

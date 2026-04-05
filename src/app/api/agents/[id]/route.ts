@@ -76,7 +76,6 @@ export async function PATCH(req: Request, ctx: Ctx) {
       );
     }
   }
-
   if (Object.keys(patch).length === 0) {
     return NextResponse.json(
       {

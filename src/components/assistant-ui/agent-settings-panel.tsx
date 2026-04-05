@@ -1,30 +1,12 @@
 "use client";
 
-import { useAui, useAuiState } from "@assistant-ui/react";
+import { useAui } from "@assistant-ui/react";
 import { Settings, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import type { AgentConfig } from "@/src/lib/agent/agent-store";
 import { resolveMainAgentRemoteId } from "@/src/lib/main-agent-id";
-
-function useMainAgentRemoteId(): string | null {
-  const aui = useAui();
-  const mainThreadId = useAuiState((s) => s.threads.mainThreadId);
-  const threadIdsKey = useAuiState((s) => s.threads.threadIds.join("|"));
-  const [id, setId] = useState<string | null>(null);
-
-  const sync = useCallback(() => {
-    const runtime = aui.threads().__internal_getAssistantRuntime?.();
-    if (!runtime) return;
-    setId(resolveMainAgentRemoteId(runtime));
-  }, [aui]);
-
-  useEffect(() => {
-    sync();
-  }, [sync, mainThreadId, threadIdsKey]);
-
-  return id;
-}
+import { useMainAgentRemoteId } from "@/src/lib/use-main-agent-remote-id";
 
 export function AgentSettingsTrigger() {
   const aui = useAui();
