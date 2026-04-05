@@ -1,11 +1,9 @@
-# Build and publish the `chat/` package to the npm registry.
-# Triggers on version tags under `chat/` (e.g. chat-v0.1.0) or manual run.
+# Build standalone + minimal `npm-publish/` package, then publish to npm.
+# Bump `version` in root package.json before tagging.
 #
 # Setup:
 # 1. Create an npm automation token: https://docs.npmjs.com/creating-and-viewing-access-tokens
 # 2. Add repository secret NPM_TOKEN (classic) or use OIDC with "trusted publishing" on npm.
-#
-# Before publishing, bump `version` in chat/package.json (or use npm version from chat/).
 
 name: Publish chat to npm
 
@@ -43,9 +41,11 @@ jobs:
           node-version: '25.x'
           registry-url: 'https://registry.npmjs.org'
           always-auth: true
-      - name: Install dependencies
+      - name: Install dependencies and build
         run: npm ci && npm run build
+      - name: Prepare npm-publish bundle (standalone + bin only)
+        run: node scripts/prepare-npm-publish.mjs
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        run: npm publish ./npm-publish --provenance --access public
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

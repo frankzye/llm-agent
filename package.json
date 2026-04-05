@@ -1,7 +1,7 @@
 {
   "name": "@frankzye/llm-agent",
-  "version": "0.1.3",
-  "private": false,
+  "version": "0.1.6",
+  "private": true,
   "description": "Next.js chat UI with assistant-ui, AI SDK, agents, and skills",
   "homepage": "https://github.com/frankzye/llm-tasks#readme",
   "bugs": {
@@ -16,12 +16,6 @@
   "bin": {
     "llm-agent": "./bin/llm-agent.js"
   },
-  "files": [
-    ".next/standalone/**",
-    ".next/static/**",
-    "bin/**",
-    "package.json"
-  ],
   "peerDependencies": {
     "next": ">=14.0.0",
     "react": ">=18.0.0",
@@ -30,6 +24,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "postbuild": "node scripts/copy-standalone-assets.mjs",
+    "prepare:npm": "node scripts/prepare-npm-publish.mjs",
+    "publish:npm": "npm run build && npm run prepare:npm && npm publish ./npm-publish --access public",
     "start": "next start",
     "cli": "node ./bin/llm-tasks-chat.js",
     "lint": "next lint",

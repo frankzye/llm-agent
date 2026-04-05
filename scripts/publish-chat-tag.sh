@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
-# Create git tag chat-v<version> from chat/package.json and push to origin
-# to trigger .github/workflows/npm-publish.yml (npm publish on GitHub Actions).
+# Create git tag chat-v<version> from root package.json and push to origin
+# to trigger .github/workflows/npm-publish.yml.
 #
 # Usage:
 #   ./scripts/publish-chat-tag.sh           # create + push tag
 #   ./scripts/publish-chat-tag.sh --dry-run # print tag only
 #
-# Prerequisite: bump version in chat/package.json and commit before tagging.
+# Prerequisite: bump version in package.json (repo root) and commit before tagging.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-CHAT_PKG="$REPO_ROOT/chat/package.json"
+PKG="$REPO_ROOT/package.json"
 
 DRY_RUN=false
 while [[ $# -gt 0 ]]; do
@@ -29,14 +29,14 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ ! -f "$CHAT_PKG" ]]; then
-  echo "error: missing $CHAT_PKG" >&2
+if [[ ! -f "$PKG" ]]; then
+  echo "error: missing $PKG" >&2
   exit 1
 fi
 
-VERSION="$(node -p "require('$CHAT_PKG').version")"
+VERSION="$(node -p "require('$PKG').version")"
 if [[ -z "$VERSION" || "$VERSION" == "undefined" ]]; then
-  echo "error: could not read version from chat/package.json" >&2
+  echo "error: could not read version from package.json" >&2
   exit 1
 fi
 
@@ -47,7 +47,7 @@ if git -C "$REPO_ROOT" rev-parse "$TAG" >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "chat/package.json version: $VERSION"
+echo "package.json version: $VERSION"
 echo "git tag: $TAG"
 
 if $DRY_RUN; then
@@ -58,4 +58,4 @@ fi
 git -C "$REPO_ROOT" tag "$TAG"
 git -C "$REPO_ROOT" push origin "$TAG"
 
-echo "Pushed $TAG — GitHub Actions should publish chat/ to npm."
+echo "Pushed $TAG — GitHub Actions should publish ./npm-publish to npm."

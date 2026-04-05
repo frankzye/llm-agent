@@ -2,7 +2,7 @@
 
 Personal workspace for LLM-related experiments: a **Next.js chat app** with **assistant-ui**, the **Vercel AI SDK**, per-agent storage, skills, optional Mem0, CLI tools, and A2A between agents. The app lives at the **repository root** under `src/`.
 
-Published npm package: **`@frankzye/llm-agent`** (see root `package.json`).
+The **npm** tarball is built separately (standalone bundle + `bin` only); the repo root `package.json` is **`private: true`** so you do not accidentally publish the full dev tree.
 
 ## License
 
@@ -81,24 +81,29 @@ Optional Mem0-related variables are used when long-term memory is enabled (see `
 | `pnpm start` | Start production server |
 | `pnpm lint` | Next.js ESLint |
 | `pnpm test` | Jest |
+| `npm run prepare:npm` | After `npm run build`, writes `npm-publish/` (standalone + `bin` + minimal `package.json`) |
+| `npm run publish:npm` | `build` → `prepare:npm` → `npm publish ./npm-publish --access public` |
 
-The published package exposes a **`llm-agent`** binary (see `bin/llm-agent.js`) intended to run the **standalone** Next output or `next start` after build.
+From a dev clone you can also run **`./bin/llm-agent.js`** after **`pnpm build`**: it starts **`.next/standalone/server.js`** when static assets were copied (`postbuild`), otherwise falls back to **`next start`** if `next` is installed.
 
-### Use as an npm dependency
+### Publish to npm (maintainers)
+
+1. Bump **`version`** in **`package.json`** (repo root).
+2. **`npm run publish:npm`** — builds the app, runs **`scripts/prepare-npm-publish.mjs`**, and publishes **only** the contents of **`npm-publish/`** (Next standalone under `.next/standalone/`, plus **`bin/llm-agent.js`**, and a **minimal** `package.json` whose **`dependencies`** are only **`next`**, **`react`**, and **`react-dom`** — not the full app graph).
+3. Or tag to run CI: **`./scripts/publish-chat-tag.sh`** (uses root `package.json` version → `chat-v*` tag → GitHub Actions publishes `./npm-publish`).
+
+The published package is meant as a **production server bundle**, not as a library of React/source imports. The tarball does **not** include nested `node_modules` (npm never packs them); **`npm-publish/package.json`** (at the **root** of that folder) declares **`next`**, **`react`**, and **`react-dom`** so `npm install -g` installs those at the package root and `require("next")` in the standalone server resolves correctly. Do not use **`npm-publish/.next/standalone/package.json`** as the install manifest — that file is copied by **`next build`** and is not what npm reads when you publish **`./npm-publish`**.
+
+### Global install (`llm-agent` CLI)
+
+After publishing:
 
 ```bash
-pnpm add @frankzye/llm-agent
+npm install -g @frankzye/llm-agent
+llm-agent
 ```
 
-In your Next.js app, add the package to `transpilePackages` if you import UI/runtime code from `node_modules`:
-
-```ts
-// next.config.ts
-const nextConfig = {
-  transpilePackages: ["@frankzye/llm-agent"],
-};
-export default nextConfig;
-```
+Optional: **`PORT=8080 llm-agent`**, **`HOSTNAME=127.0.0.1`**. Data directory follows **`LLM-TASK-DATA-PATH`** / **`.data`** in the **current working directory** when the process runs (set `cwd` or env as needed).
 
 ---
 
