@@ -256,8 +256,6 @@ export async function runChatPost(body: ChatPostBody): Promise<Response> {
     .filter(Boolean)
     .join("\n\n");
 
-  console.log("mergedSystem", mergedSystem);
-
   const dataDir = dataRootDir(cwd);
 
   const result = streamText({
