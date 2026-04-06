@@ -61,7 +61,7 @@ import { getDeepSeek } from "@/src/lib/deepseek-provider";
 
 async function pathExists(p: string): Promise<boolean> {
   try {
-    await fs.stat(p);
+    await fs.stat(/* turbopackIgnore: true */ p);
     return true;
   } catch {
     return false;
@@ -73,7 +73,7 @@ const DEFAULT_BASE_SYSTEM = `You are a helpful assistant.`;
 async function getBaseSystem(cwd: string): Promise<string> {
   const p = path.join(cwd, "system_prompt.md");
   try {
-    const raw = await fs.readFile(p, "utf8");
+    const raw = await fs.readFile(/* turbopackIgnore: true */ p, "utf8");
     const trimmed = raw.trim();
     return trimmed || DEFAULT_BASE_SYSTEM;
   } catch {
@@ -175,7 +175,9 @@ export async function runChatPost(body: ChatPostBody): Promise<Response> {
           apiKey: providerApiKey,
         }).chat(modelId);
   const globalSkillsDir = globalSkillsDataDir(cwd);
-  await fs.mkdir(globalSkillsDir, { recursive: true });
+  await fs.mkdir(/* turbopackIgnore: true */ globalSkillsDir, {
+    recursive: true,
+  });
   await ensureSkillsIndex(cwd);
   const catalog = await readSkillsCatalog(globalSkillsDir);
   const catalogIds = catalogIdSet(catalog);
@@ -364,7 +366,7 @@ export async function runChatPost(body: ChatPostBody): Promise<Response> {
             return { error: "Invalid relativePath" };
           }
           try {
-            const raw = await fs.readFile(full, "utf8");
+            const raw = await fs.readFile(/* turbopackIgnore: true */ full, "utf8");
             return {
               skillId,
               relativePath: relativePath.replace(/\\/g, "/"),
